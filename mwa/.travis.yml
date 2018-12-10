@@ -1,0 +1,19 @@
+language: go
+env:
+- GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
+go:
+- '1.10'
+script:
+- export ARCH=arm
+- export ARM=7
+- cd mwa
+- go build -ldflags "-s -w"
+after_script:
+- ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa
+- ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa/mwa
+deploy:
+  provider: releases
+  api_key:
+    secure: RsiT5CdwF1LISkAGPK5+zkwJY5YnLB5jTZ8ldTexTjxw+82RbIp3KMNTBXW+fphqMpcpcMhhrNte115ht+DLsMxZN+SLQ2B3I9YL8PMfC/lFuVCU1CIy6jN7bE6DO4EuyDVkN2+u/kf0b2su2F2hw9SLtDPDhbHVaF48gtL0pFTq9WXaqGDuzq9A7zCAfExnEKF036e0LqdILmmNi6VSDnkn2VNxrUzel6T0JHFQE3O0YzpX6yy8ie4emPsZVr4h2nNMR6r6O7mTvjmGa1xXtkRaXeTU92mynbWZqslhfIofQxf2pUeM6empvGgCcf6K5+U3bCaB3y6ZDJW9oPMdB0RT0YGIrX8jpgtgzITG3vytUaJJ1XZCu+/OJ73umgIXyGndBfuKkXYkQ3o/zz8pZA/sFupLTIHZ6xPBJfyUOKEqv3yRbzx5taeM8SFmMKbqtPCoDP3iZs9tXMlIOLkIJpsRlfc7y0uO4ludJwXYufMbqs7ZFvyEYx6PFPnvIH7LRKISFAvMfG4oos0NWBgWJOJN9srU+Qbz27YmtsK/gRbAk/Bwvodx8vdePUyqlm3u+Aiwp0r/c8rcdgzDobSi83Vj+54xsSfCO1m1ydTqVBGUhmFZVPrTZxGrxobv5IYuGBwgqUIxlXIpJr+Y+iFa24tZX6Pm9jvKVhz2hdWvrzI=
+  file: mwa
+  skip_cleanup: true
