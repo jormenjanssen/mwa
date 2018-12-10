@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -13,7 +12,7 @@ type NetworkHealth struct {
 }
 
 func (nh *NetworkHealth) VerifyConnection() error {
-	fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
+	//fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
 	_, err := Ping(nh.Address)
 
 	if err == nil {
