@@ -49,7 +49,7 @@ func TestKeepAlive(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := KeepAlive(tt.args.f, tt.args.r); (err != nil) != tt.wantErr {
+			if err := KeepAlive(tt.args.f, tt.args.r, false); (err != nil) != tt.wantErr {
 				t.Errorf("KeepAlive() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
