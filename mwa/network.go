@@ -39,7 +39,7 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 		}
 
 		// We can recover by waiting, let our caller know we succeeded by just having some patience
-		if nh.Verify() == nil {
+		if nh.VerifyOnce() == nil {
 			return nil
 		}
 
