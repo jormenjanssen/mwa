@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -20,7 +20,14 @@ func main() {
 
 	flag.Parse()
 
-	IsDebugEnabled = *debug
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+
+	} else {
+		log.SetLevel(log.InfoLevel)
+	}
+
+	log.Debugf("Logger debug enabled: %v", *debug)
 
 	if *testExec {
 
@@ -34,11 +41,10 @@ func main() {
 
 	nh := NetworkHealth{Address: *host, RecoveryTime: *recoveryTime}
 
-	log.Println(fmt.Printf("Running network health against target: %v with recovery time: %v", nh.Address, nh.RecoveryTime))
-	Debug(func() { log.Println("#Debug is enabled") })
+	log.Printf("Running network health against target: %v with recovery time: %v", nh.Address, nh.RecoveryTime)
 
 	if *invokeScript != "" {
-		fmt.Println(fmt.Printf("The error action is configured to /bin/sh %v", *invokeScript))
+		log.Infof("The error action is configured to /bin/sh %v", *invokeScript)
 		nh.RecoveryAction = func() error {
 			return executeScript(*invokeScript)
 		}
@@ -50,12 +56,12 @@ func main() {
 
 func executeScript(invokeScript string) error {
 
-	log.Println(fmt.Printf("Invoking /bin/sh %v", invokeScript))
+	log.Infof("Invoking /bin/sh %v", invokeScript)
 	cmd := exec.Command("/bin/sh", invokeScript)
 	cmdErr := cmd.Run()
 
 	if cmdErr != nil {
-		log.Println(fmt.Printf("Failed to execute script %v", cmdErr))
+		log.Warnf("Failed to execute script %v", cmdErr)
 	}
 
 	return cmdErr

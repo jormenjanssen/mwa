@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var notReachableError = fmt.Errorf("Target not reachable")
@@ -16,10 +18,7 @@ type NetworkHealth struct {
 
 func (nh NetworkHealth) Verify() error {
 
-	Debug(func() {
-		fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
-	})
-
+	log.Debugf("Invoking ping to: %v", nh.Address)
 	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, 3, 2*time.Second)
 }
 

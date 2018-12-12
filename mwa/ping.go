@@ -7,10 +7,11 @@ package main
 
 import (
 	"errors"
-	"log"
 	"net"
 	"os"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Timeout sets the ping timeout in milliseconds

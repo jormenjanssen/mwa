@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type ApplicationContext struct {
@@ -31,28 +31,22 @@ func NewApplicationContext() ApplicationContext {
 
 func LogStateChange(c WatchdogState, n WatchdogState) {
 	if c != n {
-		log.Println(fmt.Printf("Application state changes from: %v to: %v", TranslateWatchdogState(c), TranslateWatchdogState(n)))
+		log.Infof("Application state changes from: %v to: %v", TranslateWatchdogState(c), TranslateWatchdogState(n))
 	}
 }
 
 func LogCall(operation string, err error, duration time.Duration) {
 	if err != nil {
-		Debug(func() {
-			log.Println(fmt.Printf("Call failed: %v with error: %v took %v", operation, err, duration))
-		})
+		log.Debugf("Call failed: %v with error: %v took %v", operation, err, duration)
 	} else {
-		Debug(func() {
-			log.Println(fmt.Printf("Succesfully ran call: %v took %v", operation, duration))
-		})
+		log.Debugf("Succesfully ran call: %v took %v", operation, duration)
 	}
 }
 
 func DelayWatchdog(operation string, state WatchdogState) (WatchdogState, error) {
 
 	if state == Activated && operation == "verify" {
-		Debug(func() {
-			log.Println("Delaying operation verify")
-		})
+		log.Debugf("Delaying operation verify")
 		<-time.After(15 * time.Second)
 	}
 

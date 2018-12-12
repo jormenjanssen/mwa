@@ -2,7 +2,7 @@ language: go
 env:
 - GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
 go:
-- '1.10'
+- '1.11'
 script:
 - export ARCH=arm
 - export ARM=7
