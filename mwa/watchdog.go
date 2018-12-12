@@ -31,7 +31,7 @@ func TranslateWatchdogState(state WatchdogState) string {
 	}
 }
 
-func Watchdog(rctx RunContext, wc WatchdogCheck, wr WatchdogReset) {
+func Watchdog(rctx RunContext, v Verify, r Recover) {
 
 	state := Preactivated
 
@@ -42,22 +42,22 @@ func Watchdog(rctx RunContext, wc WatchdogCheck, wr WatchdogReset) {
 		case Exit:
 			return
 		case Preactivated:
-			state, _ = ActivateWhenNoErrors(rctx, wc)
+			state, _ = ActivateWhenNoErrors(rctx, v)
 			break
 		case Activated:
-			state, _ = ActivateAlarmOnErrors(rctx, wc)
+			state, _ = ActivateAlarmOnErrors(rctx, v)
 			break
 		case Alarm:
-			state, _ = HandleAlarm(rctx, wr)
+			state, _ = HandleAlarm(rctx, r)
 		}
 	}
 }
 
-func ActivateWhenNoErrors(rtcx RunContext, wc WatchdogCheck) (WatchdogState, error) {
+func ActivateWhenNoErrors(rtcx RunContext, v Verify) (WatchdogState, error) {
 
 	return rtcx.Call("verify", func(ctx context.Context, ws WatchdogState) (WatchdogState, error) {
 
-		vErr := wc.Verify()
+		vErr := v.Verify()
 
 		if vErr != nil {
 			return Preactivated, vErr
@@ -67,11 +67,11 @@ func ActivateWhenNoErrors(rtcx RunContext, wc WatchdogCheck) (WatchdogState, err
 	})
 }
 
-func ActivateAlarmOnErrors(rtcx RunContext, wc WatchdogCheck) (WatchdogState, error) {
+func ActivateAlarmOnErrors(rtcx RunContext, v Verify) (WatchdogState, error) {
 
 	return rtcx.Call("verify", func(ctx context.Context, ws WatchdogState) (WatchdogState, error) {
 
-		vErr := wc.Verify()
+		vErr := v.Verify()
 
 		if vErr != nil {
 			return Alarm, vErr
@@ -81,11 +81,11 @@ func ActivateAlarmOnErrors(rtcx RunContext, wc WatchdogCheck) (WatchdogState, er
 	})
 }
 
-func HandleAlarm(rtcx RunContext, wr WatchdogReset) (WatchdogState, error) {
+func HandleAlarm(rtcx RunContext, r Recover) (WatchdogState, error) {
 
 	return rtcx.Call("recover", func(ctx context.Context, ws WatchdogState) (WatchdogState, error) {
 
-		vErr := wr.Recover()
+		vErr := r.Recover()
 
 		if vErr != nil {
 			return Preactivated, vErr

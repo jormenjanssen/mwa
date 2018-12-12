@@ -37,17 +37,17 @@ func TestWatchdog(t *testing.T) {
 
 	type args struct {
 		rctx RunContext
-		wc   WatchdogCheck
-		wr   WatchdogReset
+		v    Verify
+		r    Recover
 	}
 
 	preActivateBecomesActivatedArgs := args{
 		rctx: NewUnitTestContext(),
-		wc:   alwaysSuccesTestStub{}}
+		v:    alwaysSuccesTestStub{}}
 
 	cycleArgs := args{
 		rctx: NewUnitTestContext(),
-		wc:   ActivateFailRecoverTestStub{}}
+		v:    ActivateFailRecoverTestStub{}}
 
 	tests := []struct {
 		name string
@@ -58,7 +58,7 @@ func TestWatchdog(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Watchdog(tt.args.rctx, tt.args.wc, tt.args.wr)
+			Watchdog(tt.args.rctx, tt.args.v, tt.args.r)
 		})
 	}
 }
