@@ -14,9 +14,10 @@ func main() {
 	recoveryTime := flag.Duration("recoverytime", 60*time.Second, "The seconds to wait before executing the recovery action")
 	host := flag.String("host", "192.168.10.2", "The default host to check against")
 
-	invokeScript := flag.String("script", "", "The command to execute when we are failed")
-	testExec := flag.Bool("exectest", false, "Check the configured action")
+	script := flag.String("script", "", "The command to execute when we are failed")
+	test := flag.Bool("test", false, "Check the configured action")
 	debug := flag.Bool("debug", false, "Enable debugging")
+	isMonitor := flag.Bool("monitor", false, "Only monitor do not execute script")
 
 	flag.Parse()
 
@@ -27,29 +28,34 @@ func main() {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	log.Debugf("Logger debug enabled: %v", *debug)
+	nh := NetworkHealth{Address: *host, RecoveryTime: *recoveryTime}
 
-	if *testExec {
-
-		if *invokeScript == "" {
-			log.Fatalf("script is not configured")
+	// Hookup the recovery action
+	if *script != "" && !*isMonitor {
+		log.Infof("The error action is configured to /bin/sh %v", *script)
+		nh.RecoveryAction = func() error {
+			return executeScript(*script)
 		}
+	} else if !*isMonitor {
+		log.Fatalf("The error action is not configured use (-script <file>) or (-monitor)")
+	} else if *isMonitor && *test {
+		log.Fatalf("Cannot use (-monitor) together with (-test). Use (-test -script <file>)")
+	}
 
-		executeScript(*invokeScript)
+	// Test execution for console
+	// Todo: Move to cobra sfp
+	if *test {
+		if nh.RecoveryAction != nil {
+			nh.RecoveryAction()
+		}
 		os.Exit(0)
 	}
 
-	nh := NetworkHealth{Address: *host, RecoveryTime: *recoveryTime}
+	// Log to our users
+	log.Debugf("Logger debug enabled: %v", *debug)
+	log.Printf("Running network health against target: %v with recovery time: [%v]", nh.Address, nh.RecoveryTime)
 
-	log.Printf("Running network health against target: %v with recovery time: %v", nh.Address, nh.RecoveryTime)
-
-	if *invokeScript != "" {
-		log.Infof("The error action is configured to /bin/sh %v", *invokeScript)
-		nh.RecoveryAction = func() error {
-			return executeScript(*invokeScript)
-		}
-	}
-
+	// Run Application
 	appCtx := NewApplicationContext()
 	Watchdog(appCtx, nh, nh)
 }

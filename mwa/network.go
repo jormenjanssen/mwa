@@ -17,7 +17,6 @@ type NetworkHealth struct {
 }
 
 func (nh NetworkHealth) Verify() error {
-
 	log.Debugf("Invoking ping to: %v", nh.Address)
 	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, 3, 2*time.Second)
 }
@@ -35,6 +34,7 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 
 		// We cannot recover by waiting, run our network recovery action.
 		if recoveryDuration > nh.RecoveryTime {
+			log.Warnf("Invoking network recovery action because [%v] exceeds maximum of [%v]", recoveryDuration, nh.RecoveryTime)
 			return LastErrorFunc(nh.RecoveryAction, TimeOutError)
 		}
 

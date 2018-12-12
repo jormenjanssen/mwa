@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -30,24 +31,25 @@ func NewApplicationContext() ApplicationContext {
 }
 
 func LogStateChange(c WatchdogState, n WatchdogState) {
+
 	if c != n {
-		log.Infof("Application state changes from: %v to: %v", TranslateWatchdogState(c), TranslateWatchdogState(n))
+		log.Infof("Watchdog state changes from: [%v] to: [%v]", TranslateWatchdogState(c), TranslateWatchdogState(n))
 	}
 }
 
 func LogCall(operation string, err error, duration time.Duration) {
 	if err != nil {
-		log.Debugf("Call failed: %v with error: %v took %v", operation, err, duration)
+		log.Debugf("CALL: [%v] [%v] [%v] [FAIL]", strings.ToUpper(operation), duration, err)
 	} else {
-		log.Debugf("Succesfully ran call: %v took %v", operation, duration)
+		log.Debugf("CALL: [%v] [%v] [OK]", strings.ToUpper(operation), duration)
 	}
 }
 
 func DelayWatchdog(operation string, state WatchdogState) (WatchdogState, error) {
 
 	if state == Activated && operation == "verify" {
-		log.Debugf("Delaying operation verify")
-		<-time.After(15 * time.Second)
+		// Only used in development logging log.Debugf("Delaying operation verify")
+		<-time.After(17 * time.Second)
 	}
 
 	return state, nil
