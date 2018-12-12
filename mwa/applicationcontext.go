@@ -31,7 +31,7 @@ func NewApplicationContext() ApplicationContext {
 
 func LogStateChange(c WatchdogState, n WatchdogState) {
 	if c != n {
-		log.Println(fmt.Printf("Application state changes from: %v to: %v", c, n))
+		log.Println(fmt.Printf("Application state changes from: %v to: %v", TranslateWatchdogState(c), TranslateWatchdogState(n)))
 	}
 }
 

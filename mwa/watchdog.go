@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 )
 
 type WatchdogState int
@@ -12,6 +13,23 @@ const (
 	Activated    WatchdogState = 1
 	Alarm        WatchdogState = 2
 )
+
+func TranslateWatchdogState(state WatchdogState) string {
+
+	switch state {
+
+	case Exit:
+		return "Exit"
+	case Preactivated:
+		return "Preactivated"
+	case Activated:
+		return "Activated"
+	case Alarm:
+		return "Alarm"
+	default:
+		return fmt.Sprintf("Not translated state: %v", state)
+	}
+}
 
 func Watchdog(rctx RunContext, wc WatchdogCheck, wr WatchdogReset) {
 

@@ -20,17 +20,7 @@ func (nh NetworkHealth) Verify() error {
 		fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
 	})
 
-	// TODO: remove this Debug Windows, refactor to +WIN BUILD only
-	//_, err := http.Get("http://www.google.nl")
-
-	up, err := Ping(nh.Address)
-
-	// Extra check if we do not have an error but also not a response
-	if !up && err == nil {
-		return notReachableError
-	}
-
-	return err
+	return nh.TryVerifyMultipleAttempts(3)
 }
 
 func (nh NetworkHealth) Recover() error {
@@ -57,6 +47,38 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 		// Wait a short while
 		<-time.After(1 * time.Second)
 	}
+}
+
+func (nh NetworkHealth) TryVerifyMultipleAttempts(attempts int) error {
+
+	var err error = nil
+
+	for i := 0; i < attempts; i++ {
+
+		err = nh.VerifyOnce()
+		if err == nil {
+			return nil
+		}
+
+		// Wait a short while
+		<-time.After(2 * time.Second)
+	}
+
+	return err
+}
+
+func (nh NetworkHealth) VerifyOnce() error {
+	// TODO: remove this Debug Windows, refactor to +WIN BUILD only
+	//_, err := http.Get("http://www.google.nl")
+
+	up, err := Ping(nh.Address)
+
+	// Extra check if we do not have an error but also not a response
+	if !up && err == nil {
+		return notReachableError
+	}
+
+	return err
 }
 
 // LastErrorFunc wraps a function where the result is always an error
