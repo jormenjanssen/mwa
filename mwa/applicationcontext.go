@@ -37,16 +37,22 @@ func LogStateChange(c WatchdogState, n WatchdogState) {
 
 func LogCall(operation string, err error, duration time.Duration) {
 	if err != nil {
-		log.Println(fmt.Printf("Call failed: %v with error: %v took %v", operation, err, duration))
+		Debug(func() {
+			log.Println(fmt.Printf("Call failed: %v with error: %v took %v", operation, err, duration))
+		})
 	} else {
-		log.Println(fmt.Printf("Succesfully ran call: %v took %v", operation, duration))
+		Debug(func() {
+			log.Println(fmt.Printf("Succesfully ran call: %v took %v", operation, duration))
+		})
 	}
 }
 
 func DelayWatchdog(operation string, state WatchdogState) (WatchdogState, error) {
 
 	if state == Activated && operation == "verify" {
-		log.Println("Delaying operation verify")
+		Debug(func() {
+			log.Println("Delaying operation verify")
+		})
 		<-time.After(15 * time.Second)
 	}
 

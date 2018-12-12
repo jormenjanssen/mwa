@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 )
 
+var notReachableError = fmt.Errorf("Target not reachable")
 var TimeOutError = fmt.Errorf("Connection is not recovered within timely fashion")
 
 type NetworkHealth struct {
@@ -16,9 +16,19 @@ type NetworkHealth struct {
 
 func (nh NetworkHealth) Verify() error {
 
-	_, err := http.Get("http://www.google.nl/")
-	fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
-	//_, err := Ping(nh.Address)
+	Debug(func() {
+		fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
+	})
+
+	// TODO: remove this Debug Windows, refactor to +WIN BUILD only
+	//_, err := http.Get("http://www.google.nl")
+
+	up, err := Ping(nh.Address)
+
+	// Extra check if we do not have an error but also not a response
+	if !up && err == nil {
+		return notReachableError
+	}
 
 	return err
 }
@@ -36,7 +46,7 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 
 		// We cannot recover by waiting, run our network recovery action.
 		if recoveryDuration > nh.RecoveryTime {
-			return FuncError(nh.RecoveryAction, TimeOutError)
+			return LastErrorFunc(nh.RecoveryAction, TimeOutError)
 		}
 
 		// We can recover by waiting, let our caller know we succeeded by just having some patience
@@ -49,7 +59,9 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 	}
 }
 
-func FuncError(f func() error, aerr error) error {
+// LastErrorFunc wraps a function where the result is always an error
+// If the function thats being called is returning nil, then we return the alternate (aerr) error
+func LastErrorFunc(f func() error, aerr error) error {
 
 	if f == nil {
 		return fmt.Errorf("No recovery action is defined we cannot recover")
