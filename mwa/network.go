@@ -20,7 +20,7 @@ func (nh NetworkHealth) Verify() error {
 		fmt.Println(fmt.Printf("Invoking ping to: %v", nh.Address))
 	})
 
-	return nh.TryVerifyMultipleAttempts(3)
+	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, 3, 2*time.Second)
 }
 
 func (nh NetworkHealth) Recover() error {
@@ -49,19 +49,19 @@ func (nh NetworkHealth) RecoverWithinTime(startTime time.Time) error {
 	}
 }
 
-func (nh NetworkHealth) TryVerifyMultipleAttempts(attempts int) error {
+func (nh NetworkHealth) TryVerifyMultipleAttempts(f func() error, attempts int, delay time.Duration) error {
 
 	var err error = nil
 
 	for i := 0; i < attempts; i++ {
 
-		err = nh.VerifyOnce()
+		err = f()
 		if err == nil {
 			return nil
 		}
 
 		// Wait a short while
-		<-time.After(2 * time.Second)
+		<-time.After(delay)
 	}
 
 	return err
