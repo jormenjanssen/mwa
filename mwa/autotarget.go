@@ -45,8 +45,6 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 					return route.IPNet.IP, nil
 				}
 			}
-
-			routes, err = netlink.NetworkGetRoutes()
 		}
 	}
 
