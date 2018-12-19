@@ -37,7 +37,7 @@ func main() {
 		timeout := 3 * time.Minute
 		log.Infof("Target host selection is set to autodetect (using default gateway) for adapter: %v with a maximum detection timeout of: %v", *gatewayTarget, timeout)
 
-		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(targetHost, timeout)
+		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(*gatewayTarget, timeout)
 
 		if err != nil {
 			log.Fatalf("Could not autodetect gateway error: %v took: %v", err, timeout)

@@ -38,19 +38,15 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 
 		for _, route := range routes {
 
-			if route.Iface != nil {
-				log.Debugf("found interface %v", route.Iface)
-				log.Debugf("found interface name: %v", route.Iface.Name)
-			}
+			if route.Iface != nil && route.Iface.Name == adapter && route.Default {
 
-			if route.IPNet != nil {
-				log.Debugf("found interface IP: %v", route.IPNet)
-				log.Debugf("found interface IP: %v", route.IPNet.IP)
-			}
+				if route.IPNet != nil {
+					log.Debugf("found gateway interface IP: %v", route.IPNet.IP)
+				}
 
-			if route.Iface != nil && route.Iface.Name == adapter && route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil {
-				return route.IPNet.IP, nil
-
+				if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil {
+					return route.IPNet.IP, nil
+				}
 			}
 		}
 	}
