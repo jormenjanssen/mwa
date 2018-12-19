@@ -18,6 +18,7 @@ func main() {
 	test := flag.Bool("test", false, "Check the configured action")
 	debug := flag.Bool("debug", false, "Enable debugging")
 	isMonitor := flag.Bool("monitor", false, "Only monitor do not execute script")
+	gatewayTarget := flag.String("default-ipv4-gateway-for-adapter", "", "The default gateway to use for host selection")
 
 	flag.Parse()
 
@@ -28,7 +29,25 @@ func main() {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	nh := NetworkHealth{Address: *host, RecoveryTime: *recoveryTime}
+	// Preset out host to host
+	targetHost := *host
+
+	if *gatewayTarget != "" {
+
+		timeout := 3 * time.Minute
+		log.Infof("Target host selection is set to autodetect (using default gateway) for adapter: %v with a maximum detection timeout of: %v", *gatewayTarget, timeout)
+
+		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(targetHost, timeout)
+
+		if err != nil {
+			log.Fatalf("Could not autodetect gateway error: %v took: %v", err, timeout)
+		}
+
+		// Assign our target host we discovered
+		targetHost = ip.String()
+	}
+
+	nh := NetworkHealth{Address: targetHost, RecoveryTime: *recoveryTime}
 
 	// Hookup the recovery action
 	if *script != "" && !*isMonitor {

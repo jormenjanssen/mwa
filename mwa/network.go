@@ -8,7 +8,6 @@ import (
 )
 
 var notReachableError = fmt.Errorf("Target not reachable")
-var TimeOutError = fmt.Errorf("Connection is not recovered within timely fashion")
 
 type NetworkHealth struct {
 	Address        string

@@ -1,3 +1,5 @@
+# github.com/jormenjanssen/netlink v1.1.0
+github.com/jormenjanssen/netlink
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/sirupsen/logrus v1.2.0
