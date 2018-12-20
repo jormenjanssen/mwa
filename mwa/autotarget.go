@@ -59,13 +59,12 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 			if route.Iface != nil && route.Iface.Name == adapter {
 
 				if route.IPNet != nil {
-					log.Debugf("found gateway interface IP: %v", route.IPNet)
-					log.Debugf("route is default: %v", route.Default)
+					log.Debugf("Found gateway interface IP: %v", route.IPNet)
 				}
 
 				for _, addr := range addresses {
 
-					ip, ipnet, err := net.ParseCIDR(addr.String())
+					ip, _, err := net.ParseCIDR(addr.String())
 
 					if err != nil {
 						log.Debugf("Could not convert address: %v to ip/ipnet error: %v", route.IPNet, err)
@@ -84,11 +83,7 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 						continue
 					}
 
-					if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil {
-						log.Debugf("Checking if ipnet %v contains %v", ipnet, route.IPNet.IP)
-					}
-
-					if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil && CompareNetworkMasks(route.IPNet.Mask, net.IPv4Mask(0, 0, 0, 0)) {
+					if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil && CompareNetworkMasks(route.IPNet.Mask, net.IPv4Mask(255, 255, 255, 255)) {
 						return route.IPNet.IP, nil
 					}
 				}
