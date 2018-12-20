@@ -33,7 +33,7 @@ func GetIpv4TargetForAdapterGatewayWithTimeout(adapter string, duration time.Dur
 
 func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 
-	log.Debugf("Searching for default gateway for adapter: %v", adapter)
+	log.Debugf("Searching for default ipv4 gateway for adapter: %v", adapter)
 
 	byNameInterface, err := net.InterfaceByName(adapter)
 
@@ -51,10 +51,6 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 	if err == nil {
 
 		for _, route := range routes {
-
-			if route.Iface != nil {
-				log.Debugf("Got route for interface: %v comparing against: %v matching: %v", route.Iface.Name, adapter, route.Iface.Name == adapter)
-			}
 
 			if route.Iface != nil && route.Iface.Name == adapter {
 
