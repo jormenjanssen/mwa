@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net"
 	"time"
 
@@ -87,7 +88,7 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 						log.Debugf("Checking if ipnet %v contains %v", ipnet, route.IPNet.IP)
 					}
 
-					if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil && ipnet.Contains(route.IPNet.IP) {
+					if route.IPNet != nil && route.IPNet.IP != nil && route.IPNet.IP.To4() != nil && CompareNetworkMasks(route.IPNet.Mask, net.IPv4Mask(0, 0, 0, 0)) {
 						return route.IPNet.IP, nil
 					}
 				}
@@ -96,4 +97,8 @@ func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
 	}
 
 	return nil, err
+}
+
+func CompareNetworkMasks(a net.IPMask, b net.IPMask) bool {
+	return bytes.Compare(a, b) == 0
 }
