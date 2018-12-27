@@ -1,12 +1,15 @@
 language: go
 go:
-- '1.11'
+- '1.11': 
+matrix:
+  include:
+    - os: linux-arm
+    env: GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
+    - os: linux-x64
+    env: GIMME_OS=linux
 script:
 - cd mwa
-- go test -v ./...
-- export ARCH=arm
-- export ARM=7
-- go build -ldflags "-s -w"
+- /bin/bash build.sh
 after_script:
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa/mwa
