@@ -5,11 +5,10 @@ jobs:
     include:
         - stage: build
           matrix:
-            include:
             - os: linux-arm
               env: GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
             - os: linux-x64
-            env: GIMME_OS=linux
+              env: GIMME_OS=linux
           script: 
             - cd mwa
             - /bin/bash ../build.sh
