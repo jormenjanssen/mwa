@@ -1,12 +1,12 @@
 language: go
 go:
-- '1.11': 
+- '1.11'
 matrix:
   include:
     - os: linux-arm
       env: GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
     - os: linux-x64
-      env: GIMME_OS=linux
+      env: GIMME_OS=linux GIMME_ARCH=amd64
 script:
 - cd mwa
 - /bin/bash build.sh
