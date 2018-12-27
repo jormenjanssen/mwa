@@ -1,4 +1,4 @@
-// +build win, !linux
+// +build !linux
 
 package main
 
