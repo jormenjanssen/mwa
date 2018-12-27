@@ -9,7 +9,7 @@ matrix:
       env: GIMME_OS=linux
 script:
 - cd mwa
-- /bin/bash build.sh
+- /bin/bash ../build.sh
 jobs:
     include:
         - stage: deploy
