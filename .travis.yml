@@ -7,6 +7,7 @@ script:
 - export ARCH=arm
 - export ARM=7
 - cd mwa
+- go test -v ./...
 - go build -ldflags "-s -w"
 after_script:
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa

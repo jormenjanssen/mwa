@@ -15,7 +15,7 @@ func TestCompareNetworkMasks(t *testing.T) {
 		args args
 		want bool
 	}{
-		{name: "CompareMasksGatewayOk", args: args{a: net.IPv4Mask(0, 0, 0, 0), b: net.IPv4Mask(0, 0, 0, 0)}, want: true},
+		{name: "CompareMasksGatewayOk", args: args{a: net.IPv4Mask(255, 255, 255, 255), b: net.IPv4Mask(0xff, 0xff, 0xff, 0xff)}, want: true},
 		{name: "CompareMasksGatewayFail", args: args{a: net.IPv4Mask(255, 255, 255, 0), b: net.IPv4Mask(0, 0, 0, 0)}, want: false},
 		{name: "CompareMasksNetworkOk", args: args{a: net.IPv4Mask(255, 255, 0, 0), b: net.IPv4Mask(255, 255, 0, 0)}, want: true},
 		{name: "CompareMasksNetworkFail", args: args{a: net.IPv4Mask(255, 255, 255, 0), b: net.IPv4Mask(255, 255, 0, 0)}, want: false},

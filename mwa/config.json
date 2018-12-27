@@ -1,0 +1,7 @@
+{
+    "ApplicationInsightsApiKey": "",
+    "AutoIpv4GatewayHost": false,
+    "Host": "",
+    "MonitorOnly": false,
+    "RecoveryTime": 60
+}
