@@ -1,13 +1,11 @@
 language: go
-env:
-- GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
 go:
 - '1.11'
 script:
-- export ARCH=arm
-- export ARM=7
 - cd mwa
 - go test -v ./...
+- export ARCH=arm
+- export ARM=7
 - go build -ldflags "-s -w"
 after_script:
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa
