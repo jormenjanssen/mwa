@@ -6,7 +6,7 @@ if [[ $GIMME_ARCH == 'amd64' ]]; then
     go test -v ./...
 fi
 
-if [[ $TRAVIS_OS_NAME == 'arm' ]]; then
+if [[ $GIMME_ARCH == 'arm' ]]; then
     echo "Running golang release build for linux-arm"
     go build -ldflags "-s -w"
 fi
