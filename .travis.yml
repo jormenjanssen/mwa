@@ -9,7 +9,7 @@ matrix:
       env: GIMME_OS=linux GIMME_ARCH=amd64
 script:
 - cd mwa
-- /bin/bash build.sh
+- /bin/bash ../build.sh
 after_script:
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa
 - ls -l $HOME/gopath/src/github.com/jormenjanssen/mwa/mwa
