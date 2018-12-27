@@ -1,0 +1,8 @@
+{
+    "Ipv4GatewayDetectionInterface": "eth0",
+    "MonitorOnly": false,
+    "RecoveryTime": "1m0s",
+    "LogPath": "C:\\pe\\app.log",
+    "Script": "recover.bat",
+    "Protocol": "icmp"
+}

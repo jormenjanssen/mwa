@@ -10,10 +10,13 @@ import (
 const MinimalRecoveryTime = 10 * time.Second
 
 type Config struct {
-	RecoveryTime        string
-	MonitorOnly         bool
-	Host                string
-	AutoIpv4GatewayHost bool
+	RecoveryTime                  string
+	MonitorOnly                   bool
+	Host                          string
+	Ipv4GatewayDetectionInterface string
+	Script                        string
+	LogPath                       string
+	Protocol                      string
 }
 
 func JsonConfigFromReader(r io.Reader) (Config, error) {
@@ -28,23 +31,38 @@ func JsonConfigFromReader(r io.Reader) (Config, error) {
 //Validate validates the config for basic validation errors
 func (c *Config) Validate() error {
 
-	d, err := c.RecoveryDuration()
+	err := c.IsValidRecoveryDuration()
 	if err != nil {
 		return err
 	}
 
-	if d < MinimalRecoveryTime {
-		return fmt.Errorf("Configured recovery time of %v is < %v treshold", d, MinimalRecoveryTime)
+	if c.RecoveryDuration() < MinimalRecoveryTime {
+		return fmt.Errorf("Configured recovery time of %v is < %v treshold", c.RecoveryDuration(), MinimalRecoveryTime)
 	}
 
-	if c.Host == "" && !c.AutoIpv4GatewayHost {
-		return fmt.Errorf("No host configured in config file")
+	if !c.MonitorOnly && c.Script == "" {
+		return fmt.Errorf("Script not configured and not in monitor only mode")
+	}
+
+	if c.Host == "" && c.Ipv4GatewayDetectionInterface == "" {
+		return fmt.Errorf("No host or auto detection using default gateway interface configured in config file")
 	}
 
 	return nil
 }
 
+func (c *Config) IsValidRecoveryDuration() error {
+	_, err := time.ParseDuration(c.RecoveryTime)
+	return err
+}
+
 //RecoveryDuration gets the recovery duration from a config structure
-func (c *Config) RecoveryDuration() (time.Duration, error) {
-	return time.ParseDuration(c.RecoveryTime)
+func (c *Config) RecoveryDuration() time.Duration {
+	t, _ := time.ParseDuration(c.RecoveryTime)
+	return t
+}
+
+//IsDiskLoggingEnabled checks if disk logging is enabled by loooking at the configured logpath
+func (c *Config) IsDiskLoggingEnabled() bool {
+	return c.LogPath != ""
 }

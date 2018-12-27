@@ -31,7 +31,7 @@ func TranslateWatchdogState(state WatchdogState) string {
 	}
 }
 
-func Watchdog(rctx RunContext, v Verify, r Recover) {
+func Watchdog(rctx RunContext, nhs NetworkHealthService) {
 
 	state := Preactivated
 
@@ -42,13 +42,13 @@ func Watchdog(rctx RunContext, v Verify, r Recover) {
 		case Exit:
 			return
 		case Preactivated:
-			state, _ = ActivateWhenNoErrors(rctx, v)
+			state, _ = ActivateWhenNoErrors(rctx, nhs)
 			break
 		case Activated:
-			state, _ = ActivateAlarmOnErrors(rctx, v)
+			state, _ = ActivateAlarmOnErrors(rctx, nhs)
 			break
 		case Alarm:
-			state, _ = HandleAlarm(rctx, r)
+			state, _ = HandleAlarm(rctx, nhs)
 		}
 	}
 }

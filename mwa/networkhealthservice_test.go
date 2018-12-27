@@ -22,7 +22,7 @@ func (as *attempedStub) Try() error {
 	return fmt.Errorf("To many failed attempts")
 }
 
-func TestNetworkHealth_TryVerifyMultipleAttempts(t *testing.T) {
+func TestNetworkHealthService_TryVerifyMultipleAttempts(t *testing.T) {
 
 	stubFirstRunSucces := attempedStub{Count: 0, SucceedAfter: 0}
 	stubSecondRunSucces := attempedStub{Count: 0, SucceedAfter: 2}
@@ -35,18 +35,18 @@ func TestNetworkHealth_TryVerifyMultipleAttempts(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		nh      NetworkHealth
+		nh      NetworkHealthService
 		args    args
 		wantErr bool
 	}{
-		{name: "FirstRunSucces", nh: NetworkHealth{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubFirstRunSucces.Try}, wantErr: false},
-		{name: "SecondRunSucces", nh: NetworkHealth{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubSecondRunSucces.Try}, wantErr: false},
-		{name: "EveryAttemptFails", nh: NetworkHealth{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubEveryAttemptFails.Try}, wantErr: true},
+		{name: "FirstRunSucces", nh: NetworkHealthService{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubFirstRunSucces.Try}, wantErr: false},
+		{name: "SecondRunSucces", nh: NetworkHealthService{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubSecondRunSucces.Try}, wantErr: false},
+		{name: "EveryAttemptFails", nh: NetworkHealthService{Address: "127.0.0.1"}, args: args{attempts: 3, f: stubEveryAttemptFails.Try}, wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := tt.nh.TryVerifyMultipleAttempts(tt.args.f, tt.args.attempts, tt.args.delay); (err != nil) != tt.wantErr {
-				t.Errorf("NetworkHealth.TryVerifyMultipleAttempts() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("NetworkHealthService.TryVerifyMultipleAttempts() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
