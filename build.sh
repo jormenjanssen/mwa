@@ -1,12 +1,12 @@
 #!/bin/bash
-echo "Invoking build script with TRAVIS_OS_NAME: ${TRAVIS_OS_NAME}"
+echo "Invoking build script with GIMME_ARCH: ${GIMME_ARCH}"
 
-if [[ $TRAVIS_OS_NAME == 'linux-x64' ]]; then
+if [[ $GIMME_ARCH == 'amd64' ]]; then
     echo "Running golang test for linux-x64"
     go test -v ./...
 fi
 
-if [[ $TRAVIS_OS_NAME == 'linux-arm' ]]; then
+if [[ $TRAVIS_OS_NAME == 'arm' ]]; then
     echo "Running golang release build for linux-arm"
     go build -ldflags "-s -w"
 fi
