@@ -3,6 +3,11 @@ go:
 - '1.11' 
 jobs:
     include:
+        - stage: build-unittest-win-amd64
+          env: GIMME_OS=windows GIMME_ARCH=amd64
+          script: 
+            - cd mwa
+            - /bin/bash ../build.sh
         - stage: build-unittest-linux-amd64
           env: GIMME_OS=linux GIMME_ARCH=amd64
           script: 
