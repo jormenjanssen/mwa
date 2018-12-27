@@ -7,11 +7,12 @@ matrix:
       env: GIMME_OS=linux GIMME_ARCH=arm GIMME_GOARM=7
     - os: linux-x64
       env: GIMME_OS=linux
-script:
-- cd mwa
-- /bin/bash ../build.sh
 jobs:
     include:
+        - stage: build
+          script: 
+            - cd mwa
+            - /bin/bash ../build.sh
         - stage: deploy
           provider: releases
           api_key:
