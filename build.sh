@@ -1,5 +1,14 @@
 #!/bin/bash
+
+# exit when any command fails
+set -e
+
 echo "Invoking build script with GIMME_ARCH: ${GIMME_ARCH}"
+
+if [[ $GIMME_OS == 'windows' ]]; then
+    go build
+	exit 0
+fi
 
 if [[ $GIMME_ARCH == 'amd64' ]]; then
     echo "Running golang test for linux-x64"
