@@ -9,6 +9,10 @@ import (
 
 var NotReachableError = fmt.Errorf("Target not reachable")
 
+const DelayForNextAttemptInRecovery = 1 * time.Second
+const DelayBetweenAttemptsInVerify = 2 * time.Second
+const VerifyAttempts = 3
+
 type NetworkHealthService struct {
 	Address        string
 	HealthCheck    NetworkHealthCheck
@@ -22,7 +26,7 @@ func NewNetworkHealthService(addr string, nhc NetworkHealthCheck, recvtime time.
 
 func (nh NetworkHealthService) Verify() error {
 	log.Debugf("Invoking network healthcheck to: %v", nh.Address)
-	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, 3, 2*time.Second)
+	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, VerifyAttempts, DelayBetweenAttemptsInVerify)
 }
 
 func (nh NetworkHealthService) Recover() error {
@@ -39,7 +43,7 @@ func (nh NetworkHealthService) RecoverWithinTime(startTime time.Time) error {
 		// We cannot recover by waiting, run our network recovery action.
 		if recoveryDuration > nh.RecoveryTime {
 			log.Warnf("Invoking network recovery action because [%v] exceeds maximum of [%v]", recoveryDuration, nh.RecoveryTime)
-			return LastErrorFunc(nh.RecoveryAction, TimeOutError)
+			return LastErrorFunc(nh.RecoveryAction, TimeOutError("Recovery-Time", recoveryDuration))
 		}
 
 		// We can recover by waiting, let our caller know we succeeded by just having some patience
@@ -48,7 +52,7 @@ func (nh NetworkHealthService) RecoverWithinTime(startTime time.Time) error {
 		}
 
 		// Wait a short while
-		<-time.After(1 * time.Second)
+		<-time.After(DelayForNextAttemptInRecovery)
 	}
 }
 

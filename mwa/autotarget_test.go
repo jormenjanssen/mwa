@@ -28,3 +28,31 @@ func TestCompareNetworkMasks(t *testing.T) {
 		})
 	}
 }
+
+func TestGetTargetHost(t *testing.T) {
+	type args struct {
+		host                string
+		autoDetectInterface string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{name: "Preset host test", args: args{host: "this.should.be.fairly.specific.0755", autoDetectInterface: "eth1"}, want: "this.should.be.fairly.specific.0755", wantErr: false},
+		{name: "No host no gateway", args: args{host: "", autoDetectInterface: ""}, want: "", wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetTargetHost(tt.args.host, tt.args.autoDetectInterface)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetTargetHost() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("GetTargetHost() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

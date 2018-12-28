@@ -12,6 +12,7 @@ import (
 
 func main() {
 
+	// Flag parsing (-debug && -test)
 	test := flag.Bool("test", false, "Check the configured action")
 	debug := flag.Bool("debug", false, "Enable debugging")
 
@@ -20,20 +21,24 @@ func main() {
 	// Try to open our config file from disk
 	file, err := os.Open(ConfigPath)
 	if err != nil {
-		log.Fatalf("Failed to open config file %v", err)
+		log.Fatalf("Failed to open config file at: %v error: %v", file, err)
 	}
 
-	// Try and validate config from reader
+	// Open validate config from reader or fail if we cannot parse this
 	cfg, err := JsonConfigFromReader(file)
 	if err != nil {
-		log.Fatalf("Failed to parse config file: %v", err)
+		log.Fatalf("Failed to parse config file: %v error: %v", file, err)
 	}
 
 	// Configure logging
 	configureLogging(cfg.LogPath, *debug, !cfg.IsDiskLoggingEnabled())
 
-	// Preset out host to host
-	host := TryGetHost(cfg.Host, cfg.Ipv4GatewayDetectionInterface)
+	// Get our host our fail
+	host, err := GetTargetHost(cfg.Host, cfg.Ipv4GatewayDetectionInterface)
+	if err != nil {
+		log.Fatalf("Failed to get target host exitting error: %v", err)
+	}
+
 	scr := NewScriptAction(cfg.Script)
 	nhs := NewNetworkHealthService(host, PingHealthCheck{}, cfg.RecoveryDuration(), scr)
 
@@ -46,34 +51,15 @@ func main() {
 	}
 
 	// Log to our users
-	log.Debugf("Logger debug enabled: %v", *debug)
-	log.Printf("Running network health watchdog against target: %v with recovery time: [%v]", nhs.Address, nhs.RecoveryTime)
+	if *debug {
+		log.Debug("#Debug logging enabled")
+	}
+
+	log.Printf("Starting NetworkHealth Watchdog against target: %v with recovery time: [%v]", nhs.Address, nhs.RecoveryTime)
 
 	// Run Application
 	appCtx := NewApplicationContext()
 	Watchdog(appCtx, nhs)
-}
-
-func TryGetHost(host string, autoDetectInterface string) string {
-
-	targetHost := host
-
-	if host != "" {
-
-		timeout := 3 * time.Minute
-		log.Infof("Target host selection is set to autodetect (using default ipv4 gateway) for adapter: %v with a maximum detection timeout of: %v", host, timeout)
-
-		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(autoDetectInterface, timeout)
-
-		if err != nil {
-			log.Fatalf("Could not autodetect gateway error: %v took: %v", err, timeout)
-		}
-
-		// Assign our target host we discovered
-		targetHost = ip.String()
-	}
-
-	return targetHost
 }
 
 func configureLogging(logpath string, debug bool, consoleOnly bool) {
@@ -101,9 +87,22 @@ func configureLogging(logpath string, debug bool, consoleOnly bool) {
 
 	// Make sure we always output to the console as fallback
 	if err != nil {
-		log.Errorf("Cannot set file logging error: %v (falling back to console only)", err)
+		log.Errorf("Cannot set file logging error: %v (falling back to console log only)", err)
 	} else {
-		log.Infof("Switching to file-based logging logfile could be found at: %v", path.Dir(logpath))
+
+		logdir := path.Dir(logpath)
+		log.Infof("Switching to file-based logging logfiles could be found at: %v", logdir)
+
+		if _, err := os.Stat(logdir); os.IsNotExist(err) {
+			log.Infof("Log directory does not exsist creating: %v", logdir)
+			// 0664 (RW+RW+R)
+			err := os.MkdirAll(logdir, 0664)
+			if err != nil {
+				log.Errorf("Cannot create logging directory: %v error: %v (falling back to console log only)", logdir, err)
+				return
+			}
+		}
+
 		log.SetOutput(writer)
 	}
 }

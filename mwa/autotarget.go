@@ -2,12 +2,44 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"net"
 	"time"
 
 	netlink "github.com/jormenjanssen/netlink"
 	log "github.com/sirupsen/logrus"
 )
+
+const AutoTargetTimeout = 3 * time.Minute
+
+func GetTargetHost(host string, autoDetectInterface string) (string, error) {
+
+	targetHost := host
+
+	// Handle the case that nothing is configured
+	if host == "" && autoDetectInterface == "" {
+		return "", fmt.Errorf("Configure host or host auto detection")
+	}
+
+	// We don't have a host but enabled auto detection for host detection
+	if host == "" && autoDetectInterface != "" {
+
+		// Let's try to discover our default gateway under the configured timeout
+
+		log.Infof("Target host selection is set to autodetect (using default ipv4 gateway) for adapter: %v with a maximum detection timeout of: %v", host, AutoTargetTimeout)
+
+		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(autoDetectInterface, AutoTargetTimeout)
+
+		if err != nil {
+			return "", TimeOutError("Gateway-Auto-Detect", AutoTargetTimeout)
+		}
+
+		// Assign our target host we discovered
+		targetHost = ip.String()
+	}
+
+	return targetHost, nil
+}
 
 func GetIpv4TargetForAdapterGatewayWithTimeout(adapter string, duration time.Duration) (net.IP, error) {
 
@@ -28,7 +60,7 @@ func GetIpv4TargetForAdapterGatewayWithTimeout(adapter string, duration time.Dur
 		<-time.After(1 * time.Second)
 	}
 
-	return nil, TimeOutError
+	return nil, TimeOutError("Gateway-Detect", duration)
 }
 
 func GetIpv4TargetForAdapterGateway(adapter string) (net.IP, error) {
