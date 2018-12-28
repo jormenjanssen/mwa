@@ -26,7 +26,7 @@ func GetTargetHost(host string, autoDetectInterface string) (string, error) {
 
 		// Let's try to discover our default gateway under the configured timeout
 
-		log.Infof("Target host selection is set to autodetect (using default ipv4 gateway) for adapter: %v with a maximum detection timeout of: %v", host, AutoTargetTimeout)
+		log.Infof("Target host selection is set to autodetect (using default ipv4 gateway) for adapter: %v with a maximum detection timeout of: %v", autoDetectInterface, AutoTargetTimeout)
 
 		ip, err := GetIpv4TargetForAdapterGatewayWithTimeout(autoDetectInterface, AutoTargetTimeout)
 

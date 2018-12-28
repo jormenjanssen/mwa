@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path"
 	"time"
@@ -10,13 +11,39 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var GitCommit string
+var Version string
+
+func ShowVersionInfo() {
+
+	if Version == "" {
+		Version = "0.0.0"
+	}
+
+	if GitCommit == "" {
+		GitCommit = "[Development build]"
+	}
+
+	fmt.Println("MWA Multi-Wireless-Agent")
+	fmt.Println(fmt.Sprintf("VERSION: %v", Version))
+	fmt.Println(fmt.Sprintf("GIT: %v", GitCommit))
+}
+
 func main() {
 
 	// Flag parsing (-debug && -test)
 	test := flag.Bool("test", false, "Check the configured action")
 	debug := flag.Bool("debug", false, "Enable debugging")
+	console := flag.Bool("console", false, "Force logging output to console only (stdout)")
+	version := flag.Bool("version", false, "Show version info and exit")
 
 	flag.Parse()
+
+	// For version info only
+	if *version {
+		ShowVersionInfo()
+		os.Exit(0)
+	}
 
 	// Try to open our config file from disk
 	file, err := os.Open(ConfigPath)
@@ -31,7 +58,7 @@ func main() {
 	}
 
 	// Configure logging
-	configureLogging(cfg.LogPath, *debug, !cfg.IsDiskLoggingEnabled())
+	configureLogging(cfg.LogPath, *debug, !cfg.IsDiskLoggingEnabled() || *console)
 
 	// Get our host our fail
 	host, err := GetTargetHost(cfg.Host, cfg.Ipv4GatewayDetectionInterface)
