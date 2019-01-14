@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path"
 	"time"
@@ -10,24 +9,6 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
 )
-
-var GitCommit string
-var Version string
-
-func ShowVersionInfo() {
-
-	if Version == "" {
-		Version = "0.0.0"
-	}
-
-	if GitCommit == "" {
-		GitCommit = "[Development build]"
-	}
-
-	fmt.Println("MWA Multi-Wireless-Agent")
-	fmt.Println(fmt.Sprintf("VERSION: %v", Version))
-	fmt.Println(fmt.Sprintf("GIT: %v", GitCommit))
-}
 
 func main() {
 
@@ -41,7 +22,7 @@ func main() {
 
 	// For version info only
 	if *version {
-		ShowVersionInfo()
+		ShowInfo()
 		os.Exit(0)
 	}
 
@@ -51,7 +32,7 @@ func main() {
 		log.Fatalf("Failed to open config file at: %v error: %v", file, err)
 	}
 
-	// Open validate config from reader or fail if we cannot parse this
+	// Validate config from reader or fail if we cannot parse this
 	cfg, err := JsonConfigFromReader(file)
 	if err != nil {
 		log.Fatalf("Failed to parse config file: %v error: %v", file, err)
@@ -60,7 +41,7 @@ func main() {
 	// Configure logging
 	configureLogging(cfg.LogPath, *debug, !cfg.IsDiskLoggingEnabled() || *console)
 
-	// Get our host our fail
+	// Get our host or fail
 	host, err := GetTargetHost(cfg.Host, cfg.Ipv4GatewayDetectionInterface)
 	if err != nil {
 		log.Fatalf("Failed to get target host exitting error: %v", err)
@@ -77,7 +58,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Log to our users
+	// Log to our users we are in debug
 	if *debug {
 		log.Debug("#Debug logging enabled")
 	}

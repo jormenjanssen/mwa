@@ -2,7 +2,7 @@ package main
 
 func NewScriptAction(script string) func() error {
 
-	if script != "" {
+	if script == "" {
 		return NoScriptErrorFunc()
 	}
 

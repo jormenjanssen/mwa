@@ -8,7 +8,7 @@ import (
 
 func ExecuteScript(invokeScript string) error {
 	log.Infof("Invoking cmd.exe %v", invokeScript)
-	cmd := exec.Command("/bin/sh", invokeScript)
+	cmd := exec.Command("cmd.exe /c", invokeScript)
 	cmdErr := cmd.Run()
 
 	if cmdErr != nil {
