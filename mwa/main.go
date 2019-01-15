@@ -48,7 +48,7 @@ func main() {
 	}
 
 	scr := NewScriptAction(cfg.Script)
-	nhs := NewNetworkHealthService(host, PingHealthCheck{}, cfg.RecoveryDuration(), scr)
+	nhs := NewNetworkHealthService(host, GetNeworkHealthCheck(cfg.Host), cfg.RecoveryDuration(), scr)
 
 	// Console helpers
 	if *test {

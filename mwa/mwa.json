@@ -1,5 +1,5 @@
 {
-    "host": "google.nl",
+    "host": "http://www.google.nl",
     "MonitorOnly": false,
     "RecoveryTime": "1m0s",
     "LogPath": "C:\\pe\\app.log",
