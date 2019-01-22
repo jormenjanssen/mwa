@@ -24,7 +24,7 @@ stages:
 linux-arm:
   <<: *go_build_linux
   variables:
-    FLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    FLAGS: "-X mwa.GitCommit=${CI_COMMIT_SHA} -X mwa.Version=${CI_COMMIT_TAG}"
     GOOS: linux
     GOARCH: arm
     GOARM: 7
