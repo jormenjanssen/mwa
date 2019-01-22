@@ -1,0 +1,32 @@
+before_script:
+  - cd mwa
+  
+.job_template: &go_build  # Hidden key that defines an anchor named 'job_definition'
+  stage: build
+  image: golang:latest
+  script:
+      - cd mwa
+      - chmod +x build.sh
+      - build.sh
+
+linux-arm:
+  <<: *go_build
+  GOOS: linux
+  GOARCH: arm
+  GOARM: 7
+
+linux-amd64:
+  <<: *go_build
+  GOOS: linux
+  GOARCH: amd64
+
+stages:
+    - build
+
+compile:
+    stage: build
+    script:
+      - ./build.sh
+    artifacts:
+      paths:
+        - mwa
