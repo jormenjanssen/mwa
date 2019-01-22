@@ -1,11 +1,15 @@
 before_script:
   - cd mwa
   
+cache:
+  paths:
+    - $HOME/go/pkg/mod
+  
 .job_template: &go_build_linux  # Hidden key that defines an anchor named 'job_definition'
   image: golang:1.11
   script:
-      - ls -l
       - go build -ldflags "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
+      - ls -l $HOME/go/pkg/mod
   artifacts:
       paths:
         - mwa/mwa
