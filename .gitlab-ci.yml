@@ -15,7 +15,7 @@ stages:
   image: golang:1.11
   script:
       - echo $FLAGS
-      - go build -ldflags $FLAGS
+      - go build mwa/main.go -ldflags $FLAGS
       - ls -l $GOPATH/pkg/mod
   artifacts:
       paths:
