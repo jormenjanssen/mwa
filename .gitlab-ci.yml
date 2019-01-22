@@ -14,7 +14,8 @@ stages:
   stage: build
   image: golang:1.11
   script:
-      - go build -ldflags ${FLAGS}
+      - echo $FLAGS
+      - go build -ldflags $FLAGS
       - ls -l $GOPATH/pkg/mod
   artifacts:
       paths:
