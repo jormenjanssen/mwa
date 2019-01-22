@@ -14,9 +14,10 @@ stages:
   stage: build
   image: golang:1.11
   script:
-      - echo $FLAGS
-      - go build mwa/
+      - echo $LDFLAGS
+      - go build
       - ls -l $GOPATH/pkg/mod
+      - readelf -h mwa
   artifacts:
       paths:
         - mwa/mwa
