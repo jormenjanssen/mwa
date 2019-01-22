@@ -4,8 +4,12 @@ before_script:
 cache:
   paths:
     - $HOME/go/pkg/mod
+
+stages:
+  - build
   
 .job_template: &go_build_linux  # Hidden key that defines an anchor named 'job_definition'
+  stage: build
   image: golang:1.11
   script:
       - go build -ldflags "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
@@ -26,5 +30,3 @@ linux-amd64:
   variables:
     GOOS: linux
     GOARCH: amd64
-
-    
