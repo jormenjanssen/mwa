@@ -7,12 +7,13 @@ cache:
 
 stages:
   - build
+  - test
   
 .job_template: &go_build_linux  # Hidden key that defines an anchor named 'job_definition'
   stage: build
   image: golang:1.11
   script:
-      - go build -ldflags "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
+      - go build -ldflags ${FLAGS}
       - ls -l $GOPATH/pkg/mod
   artifacts:
       paths:
@@ -21,12 +22,15 @@ stages:
 linux-arm:
   <<: *go_build_linux
   variables:
+    FLAGS: "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
     GOOS: linux
     GOARCH: arm
     GOARM: 7
-
+    
 linux-amd64:
   <<: *go_build_linux
   variables:
+    FLAGS: "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
     GOOS: linux
     GOARCH: amd64
+    
