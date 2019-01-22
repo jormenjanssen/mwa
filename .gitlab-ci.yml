@@ -9,6 +9,12 @@ cache:
 stages:
   - build
   - test
+
+.job_template: &go_test
+  stage: test
+  image: golang:1.11
+  script:
+      - go test -v ./...
   
 .job_template: &go_build  # Hidden key that defines an anchor named 'job_definition'
   stage: build
@@ -45,7 +51,9 @@ build-win-amd64:
     GOARCH: amd64
     
 test-linux-amd64:
-  stage: test
-  script:
-      - go test -v ./...
+  <<: *go_test
+  variables:
+    GOOS: linux
+    GOARCH: amd64
+  
     
