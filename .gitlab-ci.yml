@@ -35,3 +35,8 @@ linux-amd64:
     GOOS: linux
     GOARCH: amd64
     
+test-linux-amd64:
+  stage: test
+  script:
+      - go test -v ./...
+    
