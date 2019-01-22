@@ -11,14 +11,16 @@ before_script:
 
 linux-arm:
   <<: *go_build
-  GOOS: linux
-  GOARCH: arm
-  GOARM: 7
+  variables:
+    GOOS: linux
+    GOARCH: arm
+    GOARM: 7
 
 linux-amd64:
   <<: *go_build
-  GOOS: linux
-  GOARCH: amd64
+  variables:
+    GOOS: linux
+    GOARCH: amd64
 
 stages:
     - build
