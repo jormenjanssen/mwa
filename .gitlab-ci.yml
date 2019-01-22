@@ -6,8 +6,7 @@ before_script:
   image: golang:latest
   script:
       - cd mwa
-      - chmod +x build.sh
-      - build.sh
+      - go build -ldflags "-X main.GitCommit=${GIT_COMMIT} -X main.Version=${GIT_TAG}"
 
 linux-arm:
   <<: *go_build
