@@ -6,7 +6,6 @@ jobs:
         - stage: Build-UnitTest-DeployGithubReleases-LinuxAmd64
           env: GIMME_OS=linux GIMME_ARCH=amd64
           script: 
-            - cd mwa
             - /bin/bash ../build.sh
           deploy:
             provider: releases
