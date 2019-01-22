@@ -23,7 +23,6 @@ stages:
       - echo $LDFLAGS
       - go build
       - ls -l $GOPATH/pkg/mod
-      - readelf -h mwa
   artifacts:
       paths:
         - mwa/mwa
