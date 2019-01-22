@@ -10,7 +10,7 @@ stages:
   - build
   - test
   
-.job_template: &go_build_linux  # Hidden key that defines an anchor named 'job_definition'
+.job_template: &go_build  # Hidden key that defines an anchor named 'job_definition'
   stage: build
   image: golang:1.11
   script:
@@ -22,19 +22,26 @@ stages:
       paths:
         - mwa/mwa
 
-linux-arm:
-  <<: *go_build_linux
+build-linux-arm:
+  <<: *go_build
   variables:
-    LDFLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: "-s -w -X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
     GOOS: linux
     GOARCH: arm
     GOARM: 7
     
-linux-amd64:
-  <<: *go_build_linux
+build-linux-amd64:
+  <<: *go_build
   variables:
     LDFLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
     GOOS: linux
+    GOARCH: amd64
+    
+build-win-amd64:
+  <<: *go_build
+  variables:
+    LDFLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    GOOS: windows
     GOARCH: amd64
     
 test-linux-amd64:
