@@ -9,6 +9,16 @@ cache:
 stages:
   - build
   - test
+  - deploy
+  
+.job_template: &azure_upload_file
+  stage: deploy
+  image: microsoft/azure-cli
+  variables:
+    AZURE_STORAGE_ACCOUNT: rimotedeployment
+    AZURE_STORAGE_ACCESS_KEY: $AZURESECRETACCESKEY
+  script:
+      - az storage blob upload -f ./azure.png -n azure.png -c $ContainerName
 
 .job_template: &go_test
   stage: test
