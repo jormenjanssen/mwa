@@ -67,6 +67,8 @@ test-linux-amd64:
     GOARCH: amd64
     
 deploy-linux-arm:
+  dependencies:
+    - build-linux-amd64
   <<: *azure_upload_file
   variables: 
     AZURE_INPUT_FILE: mwa
