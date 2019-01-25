@@ -17,8 +17,9 @@ stages:
   variables:
     AZURE_STORAGE_ACCOUNT: rimotedeployment
     AZURE_STORAGE_ACCESS_KEY: $AZURESECRETACCESKEY
+    AZURE_STORAGE_CONTAINER: downloads
   script:
-      - az storage blob upload -f ./azure.png -n azure.png -c $ContainerName
+      - az storage blob upload -f $AZURE_INPUT_FILE -n $AZURE_OUTPUT_FILE -c $AZURE_STORAGE_CONTAINER
 
 .job_template: &go_test
   stage: test
@@ -67,5 +68,12 @@ test-linux-amd64:
   variables:
     GOOS: linux
     GOARCH: amd64
+    
+deploy-linux-arm:
+  <<: *azure_upload_file
+  variables: 
+    AZURE_INPUT_FILE: mwa/mwa
+    AZURE_OUTPUT_FILE: mwa-arm
+    
   
     
