@@ -80,7 +80,7 @@ deploy-linux-amd64:
     
 deploy-win-amd64:
   dependencies:
-    - build-windows-amd64
+    - build-win-amd64
   <<: *azure_upload_file
   variables: 
     AZURE_INPUT_FILE: mwa.exe
