@@ -14,10 +14,6 @@ stages:
 .job_template: &azure_upload_file
   stage: deploy
   image: microsoft/azure-cli
-  variables:
-    AZURE_STORAGE_ACCOUNT: rimotedeployment
-    AZURE_STORAGE_ACCESS_KEY: $AZURESECRETACCESKEY
-    AZURE_STORAGE_CONTAINER: downloads
   script:
       - az storage blob upload -f $AZURE_INPUT_FILE -n $AZURE_OUTPUT_FILE -c $AZURE_STORAGE_CONTAINER
 
@@ -74,6 +70,9 @@ deploy-linux-arm:
   variables: 
     AZURE_INPUT_FILE: mwa/mwa
     AZURE_OUTPUT_FILE: mwa-arm
+    AZURE_STORAGE_ACCOUNT: rimotedeployment
+    AZURE_STORAGE_ACCESS_KEY: $AZURESECRETACCESKEY
+    AZURE_STORAGE_CONTAINER: downloads
     
   
     
