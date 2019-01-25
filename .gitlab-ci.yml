@@ -8,6 +8,8 @@ stages:
   
 .job_template: &azure_upload_file
   stage: deploy
+  only:
+    - master
   image: microsoft/azure-cli
   script:
       - az login --service-principal -u https://deployment.rimote.net -p /keys/azure.pem --tenant $AZURETENANT
