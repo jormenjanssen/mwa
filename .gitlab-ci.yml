@@ -68,7 +68,7 @@ test-linux-amd64:
     
 deploy-linux-arm:
   dependencies:
-    - build-linux-amd64
+    - build-linux-arm
   <<: *azure_upload_file
   variables: 
     AZURE_INPUT_FILE: mwa
