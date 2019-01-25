@@ -85,3 +85,4 @@ deploy-win-amd64:
   variables: 
     AZURE_INPUT_FILE: mwa.exe
     AZURE_OUTPUT_FILE: Wireless-Agent\mwa-${CI_COMMIT_TAG}-win-x64.exe
+    
