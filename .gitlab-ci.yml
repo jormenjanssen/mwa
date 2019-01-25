@@ -1,11 +1,6 @@
 before_script:
   - cd mwa
   
-cache:
-  key: modules
-  paths:
-    - $HOME/go/pkg/mod
-
 stages:
   - build
   - test
@@ -14,6 +9,8 @@ stages:
 .job_template: &azure_upload_file
   stage: deploy
   image: microsoft/azure-cli
+  variables: 
+    AZURE_STORAGE_ACCOUNT: rimotedeployment
   script:
       - az login --service-principal -u https://deployment.rimote.net -p /keys/azure.pem --tenant $AZURETENANT
       - az storage blob upload -f $AZURE_INPUT_FILE -n $AZURE_OUTPUT_FILE -c $AZURE_STORAGE_CONTAINER
@@ -30,7 +27,6 @@ stages:
   script:
       - echo $LDFLAGS
       - go build
-      - ls -l $GOPATH/pkg/mod
   artifacts:
       paths:
         - ${OUTPUT}
@@ -72,10 +68,20 @@ deploy-linux-arm:
   <<: *azure_upload_file
   variables: 
     AZURE_INPUT_FILE: mwa
-    AZURE_OUTPUT_FILE: mwa-arm
-    AZURE_STORAGE_ACCOUNT: rimotedeployment
-    AZURE_STORAGE_ACCESS_KEY: $AZURESECRETACCESKEY
-    AZURE_STORAGE_CONTAINER: downloads
+    AZURE_OUTPUT_FILE: Wireless-Agent\mwa-${CI_COMMIT_TAG}-arm
     
-  
+deploy-linux-amd64:
+  dependencies:
+    - build-linux-amd64
+  <<: *azure_upload_file
+  variables: 
+    AZURE_INPUT_FILE: mwa
+    AZURE_OUTPUT_FILE: Wireless-Agent\mwa-${CI_COMMIT_TAG}-amd64
     
+deploy-win-amd64:
+  dependencies:
+    - build-windows-amd64
+  <<: *azure_upload_file
+  variables: 
+    AZURE_INPUT_FILE: mwa.exe
+    AZURE_OUTPUT_FILE: Wireless-Agent\mwa-${CI_COMMIT_TAG}-win-x64.exe
