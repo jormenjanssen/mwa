@@ -13,7 +13,7 @@ stages:
   image: microsoft/azure-cli
   script:
       - az login --service-principal -u https://deployment.rimote.net -p /keys/azure.pem --tenant $AZURETENANT
-      - az storage blob upload -f $AZURE_INPUT_FILE -n $AZURE_OUTPUT_FILE -c $AZURE_STORAGE_CONTAINER
+      - az storage blob upload -f $AZURE_INPUT_FILE -n $AZURE_OUTPUT_FILE -c downloads
 
 .job_template: &go_test
   stage: test
