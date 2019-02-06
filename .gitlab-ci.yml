@@ -34,7 +34,7 @@ stages:
 build-linux-arm:
   <<: *go_build
   variables:
-    LDFLAGS: "-s -w -X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: -s -w -X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}
     GOOS: linux
     GOARCH: arm
     GOARM: 7
@@ -43,7 +43,7 @@ build-linux-arm:
 build-linux-amd64:
   <<: *go_build
   variables:
-    LDFLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: -X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}
     GOOS: linux
     GOARCH: amd64
     OUTPUT: mwa/mwa
@@ -51,7 +51,7 @@ build-linux-amd64:
 build-win-amd64:
   <<: *go_build
   variables:
-    LDFLAGS: "-X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: -X main.GitCommit=${CI_COMMIT_SHA} -X main.Version=${CI_COMMIT_TAG}
     GOOS: windows
     GOARCH: amd64
     OUTPUT: mwa/mwa.exe
