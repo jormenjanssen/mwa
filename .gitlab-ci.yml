@@ -26,7 +26,7 @@ stages:
   image: golang:1.11
   script:
       - echo $LDFLAGS
-      - go build -ldflags $LDFLAGS
+      - go build -ldflags '$LDFLAGS'
   artifacts:
       paths:
         - ${OUTPUT}
