@@ -24,17 +24,15 @@ stages:
 .job_template: &go_build  # Hidden key that defines an anchor named 'job_definition'
   stage: build
   image: golang:1.11
-  script:
-      - echo $LDFLAGS
-      - go build -ldflags $LDFLAGS
   artifacts:
       paths:
         - ${OUTPUT}
 
 build-linux-arm:
   <<: *go_build
+  script:
+      - go build -s -w -X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}
   variables:
-    LDFLAGS: -s -w -X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}
     GOOS: linux
     GOARCH: arm
     GOARM: 7
