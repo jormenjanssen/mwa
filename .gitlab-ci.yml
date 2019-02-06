@@ -26,7 +26,7 @@ stages:
   image: golang:1.11
   script:
       - echo $LDFLAGS
-      - go build -ldflags ${LDFLAGS}
+      - go build -ldflags "${LDFLAGS}"
   artifacts:
       paths:
         - ${OUTPUT}
@@ -34,7 +34,7 @@ stages:
 build-linux-arm:
   <<: *go_build
   variables:
-    LDFLAGS: "-s -w -X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: -s -w -X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}
     GOOS: linux
     GOARCH: arm
     GOARM: 7
@@ -43,7 +43,7 @@ build-linux-arm:
 build-linux-amd64:
   <<: *go_build
   variables:
-    LDFLAGS: "-X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: -X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}
     GOOS: linux
     GOARCH: amd64
     OUTPUT: mwa/mwa
@@ -51,7 +51,7 @@ build-linux-amd64:
 build-win-amd64:
   <<: *go_build
   variables:
-    LDFLAGS: "-X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}"
+    LDFLAGS: "-X info.GitCommit=${CI_COMMIT_SHA} -X info.Version=${CI_COMMIT_TAG}
     GOOS: windows
     GOARCH: amd64
     OUTPUT: mwa/mwa.exe
