@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path"
 	"time"
@@ -58,12 +59,20 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Log to our users we are in debug
-	if *debug {
-		log.Debug("#Debug logging enabled")
+	log.Println("MWA Application starting")
+
+	// Log os uptime
+	uptime, err := GetUptime()
+	if err == nil {
+		log.Println(fmt.Sprintf("Operating System uptime: %s", uptime))
+	} else {
+		log.Println(fmt.Sprintf("Failed getting os uptime reason: %s", err))
 	}
 
-	log.Printf("Starting NetworkHealth Watchdog against target: %v with recovery time: [%v]", nhs.Address, nhs.RecoveryTime)
+	// Log to our users we are in debug
+	if *debug {
+		log.Debug("Debug logging [enabled]")
+	}
 
 	// Run Application
 	appCtx := NewApplicationContext()

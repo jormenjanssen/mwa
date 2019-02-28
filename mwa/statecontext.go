@@ -6,13 +6,14 @@ import (
 )
 
 type StateContext struct {
-	ctx          context.Context
-	currentState WatchdogState
+	ctx               context.Context
+	currentState      WatchdogState
+	latestStateChange time.Time
 
 	OnIdle        func(current WatchdogState) WatchdogState
 	AfterCall     func(operation string, err error, duration time.Duration)
 	BeforeCall    func(operation string, state WatchdogState) (WatchdogState, error)
-	OnStateChange func(current WatchdogState, new WatchdogState)
+	OnStateChange func(current WatchdogState, new WatchdogState, duration time.Duration)
 }
 
 func (stateCtx *StateContext) State() WatchdogState {
@@ -33,6 +34,17 @@ func (stateCtx *StateContext) Call(operation string, f func(ctx context.Context,
 		}
 	}
 
+	dateSince := 0 * time.Second
+
+	// Calculate time since last state
+	if stateCtx.latestStateChange.IsZero() {
+		stateCtx.latestStateChange = time.Now()
+		dateSince = 0 * time.Second
+	} else {
+		dateSince = time.Since(stateCtx.latestStateChange)
+		stateCtx.latestStateChange = time.Now()
+	}
+
 	// Actual call
 	beginTime := time.Now()
 	state, err := f(stateCtx.ctx, stateCtx.currentState)
@@ -45,7 +57,7 @@ func (stateCtx *StateContext) Call(operation string, f func(ctx context.Context,
 
 	// State change managment
 	if stateCtx.OnStateChange != nil && stateCtx.currentState != state {
-		stateCtx.OnStateChange(stateCtx.currentState, state)
+		stateCtx.OnStateChange(stateCtx.currentState, state, dateSince)
 	} else if stateCtx.OnIdle != nil && stateCtx.currentState == state && err == nil {
 		return stateCtx.OnIdle(state), nil
 	}

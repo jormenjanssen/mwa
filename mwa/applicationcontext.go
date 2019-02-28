@@ -30,10 +30,10 @@ func NewApplicationContext() ApplicationContext {
 		AfterCall:     LogCall}, Delay: 1 * time.Second}
 }
 
-func LogStateChange(c WatchdogState, n WatchdogState) {
+func LogStateChange(c WatchdogState, n WatchdogState, d time.Duration) {
 
 	if c != n {
-		log.Infof("Watchdog state changes from: [%v] to: [%v]", TranslateWatchdogState(c), TranslateWatchdogState(n))
+		log.Infof("Watchdog state changes from: [%v] to: [%v] time between state change: [%v]", TranslateWatchdogState(c), TranslateWatchdogState(n), d)
 	}
 }
 

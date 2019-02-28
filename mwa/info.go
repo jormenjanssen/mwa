@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"runtime"
+)
 
 var GitCommit string
 var Version string
@@ -17,6 +20,7 @@ func ShowInfo() {
 	}
 
 	fmt.Println("MWA Multi-Wireless-Agent")
+	fmt.Println(fmt.Sprintf("GOLANG RUNTIME: %v", runtime.Version()))
 	fmt.Println(fmt.Sprintf("VERSION: %v", Version))
 	fmt.Println(fmt.Sprintf("GIT: %v", GitCommit))
 }
