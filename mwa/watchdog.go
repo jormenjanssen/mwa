@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 )
 
 type WatchdogState int
@@ -33,7 +34,10 @@ func TranslateWatchdogState(state WatchdogState) string {
 
 func Watchdog(rctx RunContext, nhs NetworkHealthService) {
 
-	state := Preactivated
+	log.Printf("Starting NetworkHealth Watchdog against target: %v with recovery time: [%v]", nhs.Address, nhs.RecoveryTime)
+
+	// Start deactivated via function call, this helps with timing state changes and correct logging behaviour
+	state, _ := ActivateWhenNoErrors(rctx, nhs)
 
 	for {
 
