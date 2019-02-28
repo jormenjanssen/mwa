@@ -17,13 +17,13 @@ stages:
 
 .job_template: &go_test
   stage: test
-  image: golang:1.11
+  image: golang:1.12
   script:
       - go test -v ./...
   
 .job_template: &go_build  # Hidden key that defines an anchor named 'job_definition'
   stage: build
-  image: golang:1.11
+  image: golang:1.12
   artifacts:
       paths:
         - ${OUTPUT}
