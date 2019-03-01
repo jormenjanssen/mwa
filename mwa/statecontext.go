@@ -34,21 +34,21 @@ func (stateCtx *StateContext) Call(operation string, f func(ctx context.Context,
 		}
 	}
 
-	dateSince := 0 * time.Second
-
-	// Calculate time since last state
-	if stateCtx.latestStateChange.IsZero() {
-		stateCtx.latestStateChange = time.Now()
-		dateSince = 0 * time.Second
-	} else {
-		dateSince = time.Since(stateCtx.latestStateChange)
-		stateCtx.latestStateChange = time.Now()
-	}
-
 	// Actual call
 	beginTime := time.Now()
 	state, err := f(stateCtx.ctx, stateCtx.currentState)
 	executionTime := time.Since(beginTime)
+
+	dateSince := 0 * time.Second
+
+	// Calculate time since last state
+	if stateCtx.latestStateChange.IsZero() && stateCtx.currentState != state {
+		stateCtx.latestStateChange = time.Now()
+		dateSince = 0 * time.Second
+	} else if stateCtx.currentState != state {
+		dateSince = time.Since(stateCtx.latestStateChange)
+		stateCtx.latestStateChange = time.Now()
+	}
 
 	// After call
 	if stateCtx.AfterCall != nil {
