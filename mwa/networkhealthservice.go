@@ -24,7 +24,7 @@ func NewNetworkHealthService(addr string, nhc NetworkHealthCheck, recvtime time.
 	return NetworkHealthService{Address: addr, HealthCheck: nhc, RecoveryTime: recvtime, RecoveryAction: recva}
 }
 
-func (nh NetworkHealthService) Verify() error {
+func (nh NetworkHealthService) Verify(attempts int) error {
 	log.Debugf("Invoking network healthcheck to: %v", nh.Address)
 	return nh.TryVerifyMultipleAttempts(nh.VerifyOnce, VerifyAttempts, DelayBetweenAttemptsInVerify)
 }

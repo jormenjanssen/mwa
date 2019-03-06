@@ -1,5 +1,5 @@
 package main
 
 type Verify interface {
-	Verify() error
+	Verify(attempts int) error
 }
